@@ -24,11 +24,11 @@ fn main() {
     let event = Event::new(Events::EPOLLIN, listener.as_raw_fd() as _);
     epoll::ctl(epoll, EPOLL_CTL_ADD, listener.as_raw_fd(), event).unwrap();
     let mut connections = HashMap::new();
-    let mut completed = Vec::new();
     loop {
         let mut events = [Event::new(Events::empty(), 0); 1024];
         let timeout = -1; // block
         let num_events = epoll::wait(epoll, timeout, &mut events).unwrap();
+        let mut completed = Vec::new();
         'next: for event in &events[..num_events] {
             let fd = event.data as i32;
             if fd == listener.as_raw_fd() {
